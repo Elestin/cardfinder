@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Finder</title>
+</head>
+<body>
+    <h1>MTG Card Finder</h1>
+    <input type="text" id="cardInput" placeholder="Enter exact card name...">
+    <button onclick="searchCard()">Search</button>
+    <div id="result">
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Set Name</th>
+                    <th>Released</th>
+                    <th>Language</th>
+                    <th>Rarity</th>
+                    <th>Image</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function searchCard() {
+            const cardName = document.getElementById('cardInput').value;
+            const url = `https://api.scryfall.com/cards/search?q=!%22${encodeURIComponent(cardName)}%22+include%3Aextras&order=released&unique=prints`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear previous results
+            data.data.forEach(card => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = card.set_name;
+                row.insertCell(1).textContent = card.released_at;
+                row.insertCell(2).textContent = card.lang.toUpperCase();
+                row.insertCell(3).textContent = card.rarity;
+                row.insertCell(4).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
+                row.insertCell(5).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
+            });
+        }
+    </script>
+</body>
+</html>

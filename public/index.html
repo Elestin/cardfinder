@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Finder</title>
+</head>
+<body>
+    <h1>MTG Card Finder</h1>
+    <input type="text" id="cardInput" placeholder="Enter part of a card name...">
+    <button onclick="searchCard()">Search</button>
+    <div id="result">
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Set Name</th>
+                    <th>Product Name</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function searchCard() {
+            const cardName = document.getElementById('cardInput').value;
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ cardName })
+            });
+            const data = await response.json();
+            const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear previous results
+            data.cards.forEach(card => {
+                const row = tableBody.insertRow();
+                const setNameCell = row.insertCell(0);
+                const productNameCell = row.insertCell(1);
+                const imageCell = row.insertCell(2);
+                setNameCell.textContent = card.setName;
+                productNameCell.textContent = card.productName;
+                imageCell.innerHTML = card.imageUrl ? `<img src="${card.imageUrl}" alt="Image of ${card.setName}">` : 'No image';
+            });
+        }
+    </script>
+</body>
+</html>

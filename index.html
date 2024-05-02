@@ -30,8 +30,9 @@
 <script>
     async function searchCard() {
         const cardName = document.getElementById('cardInput').value;
-        const url = `https://api.scryfall.com/cards/search?q=!%22${encodeURIComponent(cardName)}%22+include%3Aextras&order=released&unique=prints`;
-        
+        // Adjusting the query to be more lenient on name matches
+        const url = `https://api.scryfall.com/cards/search?q=name:${encodeURIComponent(cardName)}*&include=extras&order=released&unique=prints`;
+
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -58,6 +59,7 @@
         }
     }
 </script>
+
 
 </body>
 </html>

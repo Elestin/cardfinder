@@ -27,12 +27,20 @@
         </table>
     </div>
 
-    <script>
-        async function searchCard() {
-            const cardName = document.getElementById('cardInput').value;
-            const url = `https://api.scryfall.com/cards/search?q=!%22${encodeURIComponent(cardName)}%22+include%3Aextras&order=released&unique=prints`;
+<script>
+    async function searchCard() {
+        const cardName = document.getElementById('cardInput').value;
+        const url = `https://api.scryfall.com/cards/search?q=!%22${encodeURIComponent(cardName)}%22+include%3Aextras&order=released&unique=prints`;
+        
+        try {
             const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch cards: ' + response.statusText);
+            }
             const data = await response.json();
+            if (!data.data || data.data.length === 0) {
+                throw new Error('No cards found.');
+            }
             const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
             tableBody.innerHTML = ''; // Clear previous results
             data.data.forEach(card => {
@@ -44,7 +52,12 @@
                 row.insertCell(4).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
                 row.insertCell(5).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
             });
+        } catch (error) {
+            console.error(error);
+            document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = `<tr><td colspan="6">Error: ${error.message}</td></tr>`;
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>

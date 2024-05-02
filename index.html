@@ -8,28 +8,44 @@
     <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 </head>
 <body>
-    <h1>MTG Card Finder</h1>
-    <input type="text" id="cardInput" placeholder="Enter exact card name...">
-    <button onclick="searchCard()">Search</button>
-    <div id="result">
-<table id="resultsTable" class="table table-striped sortable">
-    <thead class="table-dark">
-        <tr>
-            <th>Set Name</th>
-            <th>Released</th>
-            <th>Language</th>
-            <th>Rarity</th>
-            <th>Average Price</th>
-            <th>Image</th>
-            <th>Details</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Results will be inserted here -->
-    </tbody>
-</table>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    body {
+        padding: 20px;
+    }
+    img {
+        height: 100px; /* Uniform height for all card images */
+    }
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+</style>
 
+<div class="container">
+    <h1 class="mb-4 text-center">MTG Card Finder</h1>
+    <div class="input-group mb-3">
+        <input type="text" id="cardInput" class="form-control" placeholder="Enter part of a card name" aria-label="Card name" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="searchCard()">Search</button>
     </div>
+    <table id="resultsTable" class="table table-striped sortable">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Set Name</th>
+                <th>Released</th>
+                <th>Language</th>
+                <th>Rarity</th>
+                <th>Average Price (€)</th>
+                <th>Image</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Results will be inserted here -->
+        </tbody>
+    </table>
+</div>
 
 <script>
     async function searchCard() {
@@ -49,20 +65,22 @@
             tableBody.innerHTML = ''; // Clear previous results
             data.data.forEach(card => {
                 const row = tableBody.insertRow();
-                row.insertCell(0).textContent = card.set_name;
-                row.insertCell(1).textContent = card.released_at;
-                row.insertCell(2).textContent = card.lang.toUpperCase();
-                row.insertCell(3).textContent = card.rarity;
-                row.insertCell(4).textContent = card.prices.usd || 'N/A'; // Display USD price or 'N/A'
-                row.insertCell(5).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
-                row.insertCell(6).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
+                row.insertCell(0).textContent = card.name;
+                row.insertCell(1).textContent = card.set_name;
+                row.insertCell(2).textContent = card.released_at;
+                row.insertCell(3).textContent = card.lang.toUpperCase();
+                row.insertCell(4).textContent = card.rarity;
+                row.insertCell(5).textContent = card.prices.eur ? `${card.prices.eur} €` : 'N/A';
+                row.insertCell(6).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
+                row.insertCell(7).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
             });
         } catch (error) {
             console.error(error);
-            document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = `<tr><td colspan="7">Error: ${error.message}</td></tr>`;
+            document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = `<tr><td colspan="8">Error: ${error.message}</td></tr>`;
         }
     }
 </script>
+
 
 
 

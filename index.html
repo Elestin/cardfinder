@@ -49,37 +49,38 @@
 </div>
 
 <script>
-    async function searchCard() {
-        const cardName = document.getElementById('cardInput').value;
-        const url = `https://api.scryfall.com/cards/search?q=name:${encodeURIComponent(cardName)}*&include=extras&order=released&unique=prints`;
+async function searchCard() {
+    const cardName = document.getElementById('cardInput').value;
+    const url = `https://api.scryfall.com/cards/search?q=name:${encodeURIComponent(cardName)}*&include=extras&order=released&unique=prints`;
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to fetch cards: ' + response.statusText);
-            }
-            const data = await response.json();
-            if (!data.data || data.data.length === 0) {
-                throw new Error('No cards found.');
-            }
-            const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = ''; // Clear previous results
-            data.data.forEach(card => {
-                const row = tableBody.insertRow();
-                row.insertCell(0).textContent = card.name;
-                row.insertCell(1).textContent = card.set_name;
-                row.insertCell(2).textContent = card.released_at;
-                row.insertCell(3).textContent = card.lang.toUpperCase();
-                row.insertCell(4).textContent = card.rarity;
-                row.insertCell(5).textContent = card.prices.eur ? `${card.prices.eur} €` : 'N/A';
-                row.insertCell(6).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
-                row.insertCell(7).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
-            });
-        } catch (error) {
-            console.error(error);
-            document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = `<tr><td colspan="8">Error: ${error.message}</td></tr>`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch cards: ' + response.statusText);
         }
+        const data = await response.json();
+        if (!data.data || data.data.length === 0) {
+            throw new Error('No cards found.');
+        }
+        const tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = ''; // Clear previous results
+        data.data.forEach(card => {
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = card.name;
+            row.insertCell(1).textContent = card.set_name;
+            row.insertCell(2).textContent = card.frame_effects ? card.frame_effects.join(", ") : 'N/A'; // Placeholder for precon name
+            row.insertCell(3).textContent = card.released_at;
+            row.insertCell(4).textContent = card.lang.toUpperCase();
+            row.insertCell(5).textContent = card.rarity;
+            row.insertCell(6).textContent = card.prices.eur ? `${card.prices.eur} €` : 'N/A';
+            row.insertCell(7).innerHTML = card.image_uris ? `<img src="${card.image_uris.normal}" alt="Image of ${card.name}" style="height:100px;">` : 'No image';
+            row.insertCell(8).innerHTML = `<a href="${card.uri}" target="_blank">View Card</a>`;
+        });
+    } catch (error) {
+        console.error(error);
+        document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = `<tr><td colspan="9">Error: ${error.message}</td></tr>`;
     }
+}
 </script>
 
 

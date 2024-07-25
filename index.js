@@ -12,14 +12,18 @@ app.post('/search', async (req, res) => {
         const apiResponse = await axios.get(url);
         const cards = apiResponse.data.data;
         const detailedCards = cards.map(card => {
+            const preconName = card.frame_effects ? card.frame_effects.join(", ") : 'N/A'; // Placeholder for precon name
             return {
+                name: card.name,
                 setName: card.set_name,
+                preconName: preconName,
                 setUri: card.set_uri,
                 releasedAt: card.released_at,
                 lang: card.lang,
                 uri: card.uri,
                 imageUrl: card.image_uris ? card.image_uris.normal : 'No image available',
-                rarity: card.rarity
+                rarity: card.rarity,
+                price: card.prices.eur
             };
         });
         res.json({ cards: detailedCards });
